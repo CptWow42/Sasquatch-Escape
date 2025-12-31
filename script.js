@@ -969,47 +969,4 @@ class SasquatchGame {
     }
     
     completeLevel() {
-        this.stopGameLoop();
-        document.getElementById('levelCompleteScreen').classList.remove('hidden');
-    }
-    
-    gameOver() {
-        document.getElementById('gameOverScreen').classList.remove('hidden');
-    }
-    
-    nextLevel() {
-        this.level++;
-        document.getElementById('levelCompleteScreen').classList.add('hidden');
-        this.generateLevel();
-    }
-    
-    startGame() {
-        document.getElementById('startScreen').classList.add('hidden');
-        this.level = 1;
-        this.mushrooms = 0;
-        this.generateLevel();
-    }
-    
-    restartGame() {
-        document.getElementById('gameOverScreen').classList.add('hidden');
-        this.startGame();
-    }
-    
-    updateUI() {
-        this.levelElement.textContent = this.level;
-        this.hunterCountElement.textContent = this.hunterCount;
-        this.mushroomCountElement.textContent = this.mushrooms;
-    }
-    
-    showMessage(text) {
-        this.messageElement.textContent = text;
-        setTimeout(() => {
-            this.messageElement.textContent = '';
-        }, 3000);
-    }
-}
-
-// Start the game
-window.addEventListener('load', () => {
-    new SasquatchGame();
-});
+        this.stopGame
