@@ -1019,7 +1019,7 @@ class SasquatchGame {
         }
     }
     
-    // Game Management
+        // Game Management
     checkGameOver() {
         const hunterNearby = this.hunters.some(hunter => {
             const distance = Math.abs(hunter.x - this.sasquatch.x) + Math.abs(hunter.y - this.sasquatch.y);
@@ -1104,13 +1104,15 @@ window.addEventListener('load', () => {
                 console.log('START BUTTON CLICKED!');
                 game.startGame();
             });
-            
-            // Also test direct method call
-            console.log('4. Testing game.startGame() directly...');
-            // Don't call it automatically, just log
         }
         
         console.log('5. Game ready! Check console for errors');
+        
+    } catch (error) {
+        console.error('ERROR creating game:', error);
+        alert('Game failed to load: ' + error.message);
+    }
+});
         
     } catch (error) {
         console.error('ERROR creating game:', error);
