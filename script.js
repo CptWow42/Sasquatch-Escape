@@ -725,4 +725,360 @@ class SasquatchGame {
                 const movesToFootprint = directions.filter(dir => {
                     const newX = hunter.x + dir.dx;
                     const newY = hunter.y + dir.dy;
-                    const newDistance = Math.abs(newX - footprint.x) +
+                    const newDistance = Math.abs(newX - footprint.x) + Math.abs(newY - footprint.y);
+                    const currentDistance = Math.abs(hunter.x - footprint.x) + Math.abs(hunter.y - footprint.y);
+                    
+                    return newDistance < currentDistance && 
+                           newX >= 0 && newX < this.boardSize && 
+                           newY >= 0 && newY < this.boardSize && 
+                           this.grid[newY][newX] !== 'tree' && 
+                           this.grid[newY][newX] !== 'river' && 
+                           this.grid[newY][newX] !== 'cave' && 
+                           this.grid[newY][newX] !== 'hunter' &&
+                           this.grid[newY][newX] !== 'pond';
+                });
+                
+                if (movesToFootprint.length > 0) {
+                    const move = movesToFootprint[Math.floor(Math.random() * movesToFootprint.length)];
+                    this.moveHunter(hunter, hunter.x + move.dx, hunter.y + move.dy);
+                    
+                    // If hunter reached the footprint, stop tracking it
+                    if (hunter.x === footprint.x && hunter.y === footprint.y) {
+                        hunter.trackingFootprint = null;
+                    }
+                    return;
+                }
+            }
+        }
+        
+        // If not tracking a footprint, look for nearby footprints
+        const nearbyFootprints = this.footprints.filter(footprint => {
+            const distance = Math.abs(footprint.x - hunter.x) + Math.abs(footprint.y - hunter.y);
+            const freshness = this.getFootprintFreshness(footprint);
+            return distance <= 3 && freshness < 0.7; // Hunters detect footprints within 3 squares, prefer fresher ones
+        });
+        
+        // Sort footprints by freshness (freshest first)
+        nearbyFootprints.sort((a, b) => this.getFootprintFreshness(a) - this.getFootprintFreshness(b));
+        
+        // Start tracking the freshest nearby footprint
+        if (nearbyFootprints.length > 0) {
+            hunter.trackingFootprint = nearbyFootprints[0];
+            return; // Will follow it on next move
+        }
+        
+        // If no footprints nearby, move randomly
+        const directions = [
+            {dx: 1, dy: 0}, {dx: -1, dy: 0}, 
+            {dx: 0, dy: 1}, {dx: 0, dy: -1}
+        ];
+        
+        // Find valid moves (hunters can't move through terrain either)
+        const validMoves = directions.filter(dir => {
+            const newX = hunter.x + dir.dx;
+            const newY = hunter.y + dir.dy;
+            
+            if (newX < 0 || newX >= this.boardSize || newY < 0 || newY >= this.boardSize) {
+                return false;
+            }
+            
+            const targetCell = this.grid[newY][newX];
+            return targetCell !== 'tree' && 
+                   targetCell !== 'river' && 
+                   targetCell !== 'cave' && 
+                   targetCell !== 'hunter' &&
+                   targetCell !== 'pond';
+        });
+        
+        // Move randomly if valid moves available
+        if (validMoves.length > 0) {
+            const move = validMoves[Math.floor(Math.random() * validMoves.length)];
+            const newX = hunter.x + move.dx;
+            const newY = hunter.y + move.dy;
+            
+            this.moveHunter(hunter, newX, newY);
+        }
+    }
+    
+    // NEW HELPER METHOD: Handle hunter movement with mushroom collection
+    moveHunter(hunter, newX, newY) {
+        // Check if hunter is moving onto a mushroom
+        if (this.grid[newY][newX] === 'mushroom') {
+            hunter.mushrooms++;
+            this.showMessage(`A hunter found a mushroom and became invisible!`);
+            
+            // Hunters use mushrooms immediately when they find them
+            if (hunter.mushrooms > 0) {
+                this.hunterEatMushroom(hunter);
+            }
+        }
+        
+        // Update grid and hunter position
+        // Only remove hunter from old position if they were visible
+        if (!hunter.invisible) {
+            this.grid[hunter.y][hunter.x] = 'empty';
+        }
+        
+        hunter.x = newX;
+        hunter.y = newY;
+        
+        // Only mark cell as 'hunter' if the hunter is visible
+        if (!hunter.invisible) {
+            this.grid[newY][newX] = 'hunter';
+        }
+        // If hunter is invisible, the cell remains as whatever it was (empty, etc.)
+    }
+    
+    // Hunter mushroom consumption
+    hunterEatMushroom(hunter) {
+        if (hunter.mushrooms > 0) {
+            hunter.mushrooms--;
+            hunter.invisible = true;
+            
+            // Remove hunter from grid when invisible
+            this.grid[hunter.y][hunter.x] = 'empty';
+            
+            this.showMessage("A hunter ate a mushroom and vanished!");
+            
+            // Hunters stay invisible for 5 seconds (shorter than player)
+            if (hunter.invisibleTimer) clearTimeout(hunter.invisibleTimer);
+            hunter.invisibleTimer = setTimeout(() => {
+                hunter.invisible = false;
+                // Only put hunter back on grid if they're still in bounds and not on another object
+                if (hunter.x >= 0 && hunter.x < this.boardSize && 
+                    hunter.y >= 0 && hunter.y < this.boardSize &&
+                    this.grid[hunter.y][hunter.x] === 'empty') {
+                    this.grid[hunter.y][hunter.x] = 'hunter';
+                }
+                this.renderBoard();
+            }, 5000);
+            
+            this.renderBoard();
+        }
+    }
+    
+    // Bang Tree - Now creates bridges on water squares
+    bangTree() {
+        // Check if Sasquatch is next to a tree
+        const adjacentTree = this.trees.find(tree => {
+            const distance = Math.abs(tree.x - this.sasquatch.x) + Math.abs(tree.y - this.sasquatch.y);
+            return distance === 1;
+        });
+        
+        if (adjacentTree) {
+            // First check if we can create a bridge on adjacent water
+            const bridgeCreated = this.tryCreateBridge(adjacentTree);
+            
+            if (bridgeCreated) {
+                this.showMessage("You created a bridge across the river!");
+            } else {
+                this.showMessage("You bang on the tree loudly!");
+            }
+            
+            // Always scare hunters when banging on any tree
+            this.scareHunters();
+            
+        } else {
+            this.showMessage("You need to be next to a tree to bang on it!");
+        }
+    }
+    
+    // Method to create bridges on water squares
+    tryCreateBridge(tree) {
+        const directions = [
+            {dx: 1, dy: 0}, {dx: -1, dy: 0}, 
+            {dx: 0, dy: 1}, {dx: 0, dy: -1}
+        ];
+        
+        // Check all directions around the tree for rivers
+        for (const dir of directions) {
+            const waterX = tree.x + dir.dx;
+            const waterY = tree.y + dir.dy;
+            
+            // Check if adjacent cell is a river
+            if (waterX >= 0 && waterX < this.boardSize && 
+                waterY >= 0 && waterY < this.boardSize && 
+                this.grid[waterY][waterX] === 'river') {
+                
+                // Check if there's land on the opposite side of the river
+                const oppositeX = waterX + dir.dx;
+                const oppositeY = waterY + dir.dy;
+                
+                if (oppositeX >= 0 && oppositeX < this.boardSize && 
+                    oppositeY >= 0 && oppositeY < this.boardSize && 
+                    this.grid[oppositeY][oppositeX] !== 'river') {
+                    
+                    // Remove the tree
+                    this.removeTree(tree.x, tree.y);
+                    
+                    // Add bridge at the WATER position (not the tree position)
+                    this.bridges.push({ x: waterX, y: waterY });
+                    
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+    
+    // Helper method to remove a tree
+    removeTree(x, y) {
+        // Remove from trees array
+        const treeIndex = this.trees.findIndex(tree => tree.x === x && tree.y === y);
+        if (treeIndex !== -1) {
+            this.trees.splice(treeIndex, 1);
+        }
+        
+        // Remove from grid
+        this.grid[y][x] = 'empty';
+    }
+    
+    // Extracted scare hunters logic
+    scareHunters() {
+        this.hunters.forEach(hunter => {
+            // Invisible hunters aren't scared by tree banging
+            if (hunter.invisible) return;
+            
+            const distance = Math.abs(hunter.x - this.sasquatch.x) + Math.abs(hunter.y - this.sasquatch.y);
+            
+            if (distance <= 4) {
+                hunter.scared = true;
+                hunter.trackingFootprint = null; // Stop tracking when scared
+                
+                // Hunters stay scared for 3 seconds
+                if (hunter.scaredTimer) clearTimeout(hunter.scaredTimer);
+                hunter.scaredTimer = setTimeout(() => {
+                    hunter.scared = false;
+                    this.renderBoard();
+                }, 3000);
+            }
+        });
+        
+        this.renderBoard();
+    }
+    
+    // Abilities
+    makeNoise() {
+        this.showMessage("You make a loud noise...");
+        
+        this.hunters.forEach(hunter => {
+            // Invisible hunters aren't affected by noise
+            if (hunter.invisible) return;
+            
+            const distance = Math.abs(hunter.x - this.sasquatch.x) + Math.abs(hunter.y - this.sasquatch.y);
+            // Hunters within 5 squares hear the noise
+            if (distance <= 5) {
+                const directions = [
+                    {dx: 1, dy: 0}, {dx: -1, dy: 0}, 
+                    {dx: 0, dy: 1}, {dx: 0, dy: -1}
+                ];
+                
+                const moveToSasquatch = directions.find(dir => {
+                    const newX = hunter.x + dir.dx;
+                    const newY = hunter.y + dir.dy;
+                    const newDistance = Math.abs(newX - this.sasquatch.x) + Math.abs(newY - this.sasquatch.y);
+                    return newDistance < distance && 
+                           newX >= 0 && newX < this.boardSize && 
+                           newY >= 0 && newY < this.boardSize && 
+                           this.grid[newY][newX] !== 'tree' && 
+                           this.grid[newY][newX] !== 'river' && 
+                           this.grid[newY][newX] !== 'cave' && 
+                           this.grid[newY][newX] !== 'hunter' &&
+                           this.grid[newY][newX] !== 'pond';
+                });
+                
+                if (moveToSasquatch) {
+                    // Use the new moveHunter method
+                    this.moveHunter(hunter, hunter.x + moveToSasquatch.dx, hunter.y + moveToSasquatch.dy);
+                }
+            }
+        });
+        
+        // Only render board, game loop handles game over check
+        this.renderBoard();
+    }
+    
+    // Mushroom powers
+    eatMushroom() {
+        if (this.mushrooms > 0) {
+            this.mushrooms--;
+            this.isInvisible = true;
+            this.showMessage("You turned invisible for 3 seconds!");
+            
+            if (this.invisibilityTimer) clearTimeout(this.invisibilityTimer);
+            this.invisibilityTimer = setTimeout(() => {
+                this.isInvisible = false;
+                this.showMessage("You are visible again!");
+                this.renderBoard();
+            }, 3000);
+            
+            this.updateUI();
+            this.renderBoard();
+        } else {
+            this.showMessage("No mushrooms available!");
+        }
+    }
+    
+    // Game Management
+    checkGameOver() {
+        const hunterNearby = this.hunters.some(hunter => {
+            const distance = Math.abs(hunter.x - this.sasquatch.x) + Math.abs(hunter.y - this.sasquatch.y);
+            // Game over conditions:
+            // - Hunter is within 1 square
+            // - Hunter is not scared
+            // - Sasquatch is not invisible
+            // - Hunter is not invisible (invisible hunters can't catch you)
+            return distance <= 1 && !hunter.scared && !this.isInvisible && !hunter.invisible;
+        });
+        
+        if (hunterNearby) {
+            this.stopGameLoop(); // Stop game loop when game over
+            this.gameOver();
+        }
+    }
+    
+    completeLevel() {
+        this.stopGameLoop(); // Stop game loop when level complete
+        document.getElementById('levelCompleteScreen').classList.remove('hidden');
+    }
+    
+    gameOver() {
+        document.getElementById('gameOverScreen').classList.remove('hidden');
+    }
+    
+    nextLevel() {
+        this.level++;
+        document.getElementById('levelCompleteScreen').classList.add('hidden');
+        this.generateLevel();
+    }
+    
+    startGame() {
+        document.getElementById('startScreen').classList.add('hidden');
+        this.level = 1;
+        this.mushrooms = 0;
+        this.generateLevel();
+    }
+    
+    restartGame() {
+        document.getElementById('gameOverScreen').classList.add('hidden');
+        this.startGame();
+    }
+    
+    updateUI() {
+        this.levelElement.textContent = this.level;
+        this.hunterCountElement.textContent = this.hunterCount;
+        this.mushroomCountElement.textContent = this.mushrooms;
+    }
+    
+    showMessage(text) {
+        this.messageElement.textContent = text;
+        setTimeout(() => {
+            this.messageElement.textContent = '';
+        }, 3000);
+    }
+}
+
+// Start the game when the page loads
+window.addEventListener('load', () => {
+    new SasquatchGame();
+});
