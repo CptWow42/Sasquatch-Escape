@@ -1078,19 +1078,6 @@ class SasquatchGame {
     }
 }
 
-// Start the game when the page loads
-window.addEventListener('load', () => {
-    new SasquatchGame();
-});
-// added to fix game not launching from README
-    showMessage(text) {
-        this.messageElement.textContent = text;
-        setTimeout(() => {
-            this.messageElement.textContent = '';
-        }, 3000);
-    }
-}
-
 // DEBUG VERSION - Start the game with logging
 window.addEventListener('load', () => {
     console.log('=== SASQUATCH GAME DEBUG ===');
