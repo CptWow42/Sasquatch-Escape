@@ -12,7 +12,8 @@ body {
     align-items: center;
     min-height: 100vh;
     color: #fff;
-    padding: 20px;
+    padding: 10px;
+    -webkit-tap-highlight-color: transparent;
 }
 
 #gameContainer {
@@ -20,9 +21,10 @@ body {
     background: #2d7a2d;
     border: 4px solid #5a3921;
     border-radius: 8px;
-    padding: 20px;
+    padding: 15px;
     box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
     max-width: 100%;
+    width: 100%;
     overflow: hidden;
 }
 
@@ -30,7 +32,7 @@ body {
     display: flex;
     justify-content: space-between;
     margin-bottom: 15px;
-    font-size: 18px;
+    font-size: 16px;
     font-weight: bold;
     flex-wrap: wrap;
     gap: 10px;
@@ -38,7 +40,7 @@ body {
 
 #ui > div {
     flex: 1;
-    min-width: 120px;
+    min-width: 100px;
 }
 
 #message {
@@ -47,13 +49,13 @@ body {
     min-height: 25px;
     width: 100%;
     order: 3;
-    margin-top: 10px;
+    margin-top: 5px;
 }
 
 #gameBoard {
     display: grid;
-    grid-template-columns: repeat(15, minmax(0, 30px));
-    grid-template-rows: repeat(15, minmax(0, 30px));
+    grid-template-columns: repeat(15, 30px);
+    grid-template-rows: repeat(15, 30px);
     gap: 1px;
     background: #3e8c3e;
     border: 3px solid #5a3921;
@@ -64,14 +66,15 @@ body {
 }
 
 .cell {
-    width: 100%;
-    height: 100%;
-    aspect-ratio: 1/1;
+    width: 30px;
+    height: 30px;
     background: #4ca64c;
     display: flex;
     justify-content: center;
     align-items: center;
-    font-size: 16px;
+    font-size: 20px;
+    -webkit-user-select: none;
+    user-select: none;
 }
 
 /* Squatch Styling*/
@@ -148,6 +151,8 @@ button {
     transition: all 0.2s;
     min-width: 140px;
     touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+    user-select: none;
 }
 
 button:hover {
@@ -155,21 +160,22 @@ button:hover {
     transform: scale(1.05);
 }
 
-button:active {
+button:active, button.active {
+    background: #8b5a2d;
     transform: scale(0.95);
 }
 
 /* Mobile Touch Controls */
 #mobileControls {
-    margin: 20px 0;
-    display: flex;
+    margin: 15px 0;
+    display: none;
     justify-content: center;
 }
 
 .touch-controls {
-    background: rgba(90, 57, 33, 0.8);
+    background: rgba(90, 57, 33, 0.9);
     border-radius: 20px;
-    padding: 20px;
+    padding: 15px;
     backdrop-filter: blur(5px);
 }
 
@@ -179,7 +185,7 @@ button:active {
         ". up ."
         "left . right"
         ". down .";
-    gap: 15px;
+    gap: 10px;
     justify-items: center;
 }
 
@@ -191,13 +197,13 @@ button:active {
 }
 
 .touch-btn {
-    width: 70px;
-    height: 70px;
+    width: 65px;
+    height: 65px;
     background: #5a3921;
     border: 3px solid #8b5a2d;
     border-radius: 50%;
     color: white;
-    font-size: 28px;
+    font-size: 26px;
     font-weight: bold;
     display: flex;
     align-items: center;
@@ -206,11 +212,12 @@ button:active {
     user-select: none;
     cursor: pointer;
     transition: all 0.1s;
+    -webkit-tap-highlight-color: transparent;
 }
 
 .touch-btn:active, .touch-btn.active {
     background: #8b5a2d;
-    transform: scale(0.9);
+    transform: scale(0.85);
 }
 
 .touch-btn.up { 
@@ -225,12 +232,12 @@ button:active {
 
 .touch-btn.left { 
     grid-area: left; 
-    margin-right: 10px;
+    margin-right: 5px;
 }
 
 .touch-btn.right { 
     grid-area: right; 
-    margin-left: 10px;
+    margin-left: 5px;
 }
 
 #instructions {
@@ -245,6 +252,7 @@ button:active {
     color: #aaa;
     margin-top: 5px;
     font-style: italic;
+    display: none;
 }
 
 /* Screen overlays */
@@ -263,23 +271,23 @@ button:active {
 
 .screenContent {
     background: #2d7a2d;
-    padding: 30px;
+    padding: 25px;
     border: 4px solid #5a3921;
     border-radius: 8px;
     text-align: center;
-    max-width: 90%;
+    max-width: 95%;
     width: 500px;
-    margin: 20px;
+    margin: 10px;
 }
 
 .screenContent h1 {
     color: #ffeb3b;
     margin-bottom: 20px;
-    font-size: 2em;
+    font-size: 1.8em;
 }
 
 .screenContent p {
-    margin-bottom: 25px;
+    margin-bottom: 20px;
     font-size: 1.1em;
     line-height: 1.5;
 }
@@ -325,23 +333,39 @@ button:active {
     }
 }
 
-/* Responsive adjustments */
+/* ========== RESPONSIVE DESIGN ========== */
+
+/* Show mobile controls on mobile devices */
 @media (max-width: 768px) {
+    #mobileControls {
+        display: flex !important;
+    }
+    
+    .mobile-instruction {
+        display: block !important;
+    }
+    
+    #gameContainer {
+        padding: 10px;
+    }
+    
     #gameBoard {
-        grid-template-columns: repeat(15, minmax(0, 20px));
-        grid-template-rows: repeat(15, minmax(0, 20px));
+        grid-template-columns: repeat(15, 20px) !important;
+        grid-template-rows: repeat(15, 20px) !important;
     }
     
     .cell {
-        font-size: 14px;
+        width: 20px !important;
+        height: 20px !important;
+        font-size: 16px !important;
     }
     
     #ui {
-        font-size: 16px;
+        font-size: 14px;
     }
     
     button {
-        padding: 10px 16px;
+        padding: 10px 15px;
         font-size: 14px;
         min-width: 120px;
     }
@@ -357,22 +381,43 @@ button:active {
     }
     
     .screenContent h1 {
-        font-size: 1.8em;
+        font-size: 1.6em;
     }
 }
 
-@media (max-width: 480px) {
-    #gameContainer {
-        padding: 15px;
+/* Also show on touch devices */
+@media (hover: none) and (pointer: coarse) {
+    #mobileControls {
+        display: flex !important;
     }
     
+    .mobile-instruction {
+        display: block !important;
+    }
+}
+
+/* Hide on desktop */
+@media (min-width: 769px) and (hover: hover) {
+    #mobileControls {
+        display: none !important;
+    }
+    
+    .mobile-instruction {
+        display: none !important;
+    }
+}
+
+/* Small phones */
+@media (max-width: 480px) {
     #gameBoard {
-        grid-template-columns: repeat(15, minmax(0, 18px));
-        grid-template-rows: repeat(15, minmax(0, 18px));
+        grid-template-columns: repeat(15, 18px) !important;
+        grid-template-rows: repeat(15, 18px) !important;
     }
     
     .cell {
-        font-size: 12px;
+        width: 18px !important;
+        height: 18px !important;
+        font-size: 14px !important;
     }
     
     #controls {
@@ -382,7 +427,7 @@ button:active {
     button {
         padding: 8px 12px;
         font-size: 13px;
-        min-width: 100px;
+        min-width: 110px;
     }
     
     .touch-btn {
@@ -396,28 +441,36 @@ button:active {
     }
     
     .screenContent h1 {
-        font-size: 1.6em;
+        font-size: 1.4em;
+    }
+    
+    #instructions {
+        font-size: 12px;
     }
 }
 
-/* Hide mobile controls on desktop by default */
-@media (min-width: 769px) {
-    #mobileControls {
-        display: none;
+/* Very small phones */
+@media (max-width: 360px) {
+    #gameBoard {
+        grid-template-columns: repeat(15, 16px) !important;
+        grid-template-rows: repeat(15, 16px) !important;
     }
     
-    .mobile-instruction {
-        display: none;
-    }
-}
-
-/* Show mobile controls on touch-capable devices */
-@media (hover: none) and (pointer: coarse) {
-    #mobileControls {
-        display: flex !important;
+    .cell {
+        width: 16px !important;
+        height: 16px !important;
+        font-size: 12px !important;
     }
     
-    .mobile-instruction {
-        display: block !important;
+    button {
+        padding: 6px 10px;
+        font-size: 12px;
+        min-width: 100px;
+    }
+    
+    .touch-btn {
+        width: 50px;
+        height: 50px;
+        font-size: 20px;
     }
 }
