@@ -1,10 +1,10 @@
-8-Bit Sasquatch Escape 🦧
+## Sasquatch Escape 🦧
 A retro-style puzzle game where you help a Sasquatch return to its cave while avoiding hunters!
 
-🎮 Game Description
+## 🎮 Game Description
 You control a Sasquatch trying to make it back home to its cave. Hunters are searching for you, and you must use stealth, strategy, and special abilities to avoid detection. With each level, the challenge increases with more hunters, new terrain features, and smarter AI.
 
-🚀 How to Play
+## 🚀 How to Play
 Basic Controls
 Arrow Keys - Move Sasquatch
 
@@ -14,12 +14,12 @@ B - Bang Tree (scares nearby hunters and can create bridges)
 
 M - Eat Mushroom (become temporarily invisible)
 
-Game Mechanics
+## Game Mechanics
 Hiding: Stay behind trees (dark green squares) to avoid detection
 
 Footprints: You leave temporary footprints that hunters can track
 
-Special Terrain:
+## Special Terrain:
 
 Rivers (🌊) - Can't cross without a bridge
 
@@ -31,14 +31,14 @@ Ponds (🏞️) - Block movement for both you and hunters
 
 Animals (🐇🐿️🦌🐦) - Decorative woodland creatures
 
-🎯 Objectives
+## 🎯 Objectives
 Reach the cave (🍙) without being spotted by hunters (🤠)
 
 Complete each level to progress to the next
 
 Use your abilities strategically to avoid detection
 
-🏆 Features
+## 🏆 Features
 Progressive Difficulty: Each level adds more hunters and new challenges
 
 Smart AI: Hunters track footprints and can also collect mushrooms
@@ -51,7 +51,7 @@ Start Screens: Beautiful overlay screens for game states
 
 Retro Aesthetic: 8-bit inspired graphics and styling
 
-📁 Project Structure
+## 📁 Project Structure
 text
 8-bit-sasquatch-escape/
 │
@@ -70,7 +70,7 @@ Game Loop: Automated hunter movement every 800ms
 
 Footprint System: Time-based tracking with decay
 
-🎮 Levels
+## 🎮 Levels
 The game gets progressively harder:
 
 Level 1: Basic hunters and trees
@@ -81,7 +81,7 @@ Level 6+: Mushrooms appear (grant invisibility)
 
 Later Levels: More hunters, ponds appear, animals roam
 
-💡 Tips & Strategies
+## 💡 Tips & Strategies
 Plan Your Route: Think several moves ahead to avoid hunters
 
 Use Trees Wisely: Stay behind them when hunters are near
@@ -94,7 +94,7 @@ Save Mushrooms: Use invisibility at critical moments
 
 Watch for Footprints: Hunters can track where you've been
 
-🚀 Quick Start
+## 🚀 Quick Start
 Clone or download this repository
 
 Open index.html in your web browser
@@ -103,10 +103,10 @@ Click "Start Game" or press Enter
 
 Use arrow keys to move and avoid hunters!
 
-🌐 Live Demo
+## 🌐 Live Demo
 https://cptwow42.github.io/Sasquatch-Escape/
 
-🛡️ Browser Compatibility
+## 🛡️ Browser Compatibility
 Works on all modern browsers:
 
 Chrome 60+
@@ -117,13 +117,13 @@ Safari 11+
 
 Edge 79+
 
-📝 License
+## 📝 License
 This project is open source and available under the MIT License.
 
 👨‍💻 Author
 Created by Patrick Mulvany
 
-🤝 Contributing
+## 🤝 Contributing
 Contributions, issues, and feature requests are welcome! Feel free to check issues page.
 
 Made with pure JavaScript - no frameworks, no libraries, just fun!
