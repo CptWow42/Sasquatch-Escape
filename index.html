@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>8-Bit Sasquatch Escape</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="gameContainer">
+        <div id="ui">
+            <div id="level">Level: <span id="levelNumber">1</span></div>
+            <div id="hunters">Hunters: <span id="hunterCount">1</span></div>
+            <div id="message"></div>
+        </div>
+        
+        <div id="gameBoard"></div>
+        
+        <div id="controls">
+            <button id="makeNoise">Make Noise (N)</button>
+            <button id="bangTree">Bang Tree (B)</button>
+            <button id="eatMushroom">Eat Mushroom (M) <span id="mushroomCount">0</span></button>
+        </div>
+        
+        <div id="instructions">
+            <p>Use ARROW KEYS to move Sasquatch. Hide behind trees (dark green). Avoid hunters in orange.</p>
+        </div>
+    </div>
+
+    <!-- Start Screen -->
+    <div id="startScreen" class="screen">
+        <div class="screenContent">
+            <h1>8-Bit Sasquatch Escape</h1>
+            <p>Help the Sasquatch return to its cave without being seen by hunters!</p>
+            <button id="startButton">Start Game</button>
+            <p style="margin-top: 15px; font-size: 14px; color: #ccc;">Or press ENTER to start</p>
+        </div>
+    </div>
+
+    <!-- Level Complete Screen -->
+    <div id="levelCompleteScreen" class="screen hidden">
+        <div class="screenContent">
+            <h1>Level Complete!</h1>
+            <p>You made it back to the cave safely!</p>
+            <button id="nextLevelButton">Next Level</button>
+            <p style="margin-top: 15px; font-size: 14px; color: #ccc;">Or press ENTER to continue</p>
+        </div>
+    </div>
+
+    <!-- Game Over Screen -->
+    <div id="gameOverScreen" class="screen hidden">
+        <div class="screenContent">
+            <h1>Game Over!</h1>
+            <p>You were spotted by a hunter!</p>
+            <button id="restartButton">Play Again</button>
+            <p style="margin-top: 15px; font-size: 14px; color: #ccc;">Or press ENTER to restart</p>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
