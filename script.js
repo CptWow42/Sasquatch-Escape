@@ -1082,3 +1082,51 @@ class SasquatchGame {
 window.addEventListener('load', () => {
     new SasquatchGame();
 });
+// added to fix game not launching from README
+    showMessage(text) {
+        this.messageElement.textContent = text;
+        setTimeout(() => {
+            this.messageElement.textContent = '';
+        }, 3000);
+    }
+}
+
+// DEBUG VERSION - Start the game with logging
+window.addEventListener('load', () => {
+    console.log('=== SASQUATCH GAME DEBUG ===');
+    console.log('1. Window loaded, creating game instance...');
+    
+    try {
+        const game = new SasquatchGame();
+        window.game = game; // Make accessible in console for debugging
+        
+        console.log('2. Game instance created successfully');
+        console.log('3. Checking button elements...');
+        
+        // Test if buttons are accessible
+        const startButton = document.getElementById('startButton');
+        const startScreen = document.getElementById('startScreen');
+        
+        console.log('Start button found:', !!startButton);
+        console.log('Start screen found:', !!startScreen);
+        console.log('Start screen hidden?', startScreen.classList.contains('hidden'));
+        
+        if (startButton) {
+            // Add test click handler
+            startButton.addEventListener('click', () => {
+                console.log('START BUTTON CLICKED!');
+                game.startGame();
+            });
+            
+            // Also test direct method call
+            console.log('4. Testing game.startGame() directly...');
+            // Don't call it automatically, just log
+        }
+        
+        console.log('5. Game ready! Check console for errors');
+        
+    } catch (error) {
+        console.error('ERROR creating game:', error);
+        alert('Game failed to load: ' + error.message);
+    }
+});
