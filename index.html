@@ -15,15 +15,6 @@
     <meta name="twitter:card" content="summary">
     <meta name="twitter:title" content="8-Bit Sasquatch Escape">
     <meta name="twitter:description" content="Help Sasquatch escape hunters in this retro puzzle game!">
-    
-    <!-- Redirect Facebook/Instagram apps -->
-    <script>
-        if (navigator.userAgent.match(/FBAN|FBAV|Instagram|Messenger/i)) {
-            setTimeout(function() {
-                alert("For best experience, open in your phone's browser (Chrome/Safari).");
-            }, 1000);
-        }
-    </script>
 </head>
 <body>
     <div id="gameContainer">
@@ -97,101 +88,58 @@
     <script>
         // Mobile touch controls initialization
         document.addEventListener('DOMContentLoaded', function() {
-            const mobileControls = document.getElementById('mobileControls');
-            
-            // Better mobile detection
+            // Show mobile controls on mobile devices
             function isMobileDevice() {
-                return (window.innerWidth <= 768) ||
-                       ('ontouchstart' in window) ||
-                       (navigator.maxTouchPoints > 0) ||
+                return window.innerWidth <= 768 || 
+                       'ontouchstart' in window || 
                        /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
             }
             
-            // Show mobile controls on mobile devices
             if (isMobileDevice()) {
-                mobileControls.classList.remove('hidden');
-                
-                // Adjust game board for mobile
-                const gameBoard = document.getElementById('gameBoard');
-                if (gameBoard) {
-                    const availableWidth = window.innerWidth - 40;
-                    const cellSize = Math.max(18, Math.floor(availableWidth / 15));
-                    gameBoard.style.gridTemplateColumns = `repeat(15, ${cellSize}px)`;
-                    gameBoard.style.gridTemplateRows = `repeat(15, ${cellSize}px)`;
-                }
-                
-                // Add touch event handlers for movement
-                document.querySelectorAll('.touch-btn').forEach(button => {
-                    button.addEventListener('touchstart', function(e) {
-                        e.preventDefault();
-                        this.classList.add('active');
-                        const direction = this.dataset.direction;
-                        // Simulate arrow key press
-                        const event = new KeyboardEvent('keydown', {
-                            key: 'Arrow' + direction.charAt(0).toUpperCase() + direction.slice(1),
-                            bubbles: true
-                        });
-                        window.dispatchEvent(event);
-                    });
-                    
-                    button.addEventListener('touchend', function(e) {
-                        e.preventDefault();
-                        this.classList.remove('active');
-                    });
-                    
-                    button.addEventListener('touchcancel', function(e) {
-                        this.classList.remove('active');
-                    });
-                    
-                    // Mouse support for testing
-                    button.addEventListener('mousedown', function(e) {
-                        e.preventDefault();
-                        this.classList.add('active');
-                        const direction = this.dataset.direction;
-                        const event = new KeyboardEvent('keydown', {
-                            key: 'Arrow' + direction.charAt(0).toUpperCase() + direction.slice(1),
-                            bubbles: true
-                        });
-                        window.dispatchEvent(event);
-                    });
-                    
-                    button.addEventListener('mouseup', function(e) {
-                        this.classList.remove('active');
-                    });
-                });
+                document.getElementById('mobileControls').classList.remove('hidden');
             }
-            
-            // Make sure all game buttons work on touch devices
-            ['makeNoise', 'bangTree', 'eatMushroom', 'startButton', 'nextLevelButton', 'restartButton'].forEach(id => {
-                const btn = document.getElementById(id);
-                if (btn) {
-                    btn.addEventListener('touchstart', function(e) {
-                        e.preventDefault();
-                        this.classList.add('active');
-                        setTimeout(() => this.click(), 50);
-                    });
-                    
-                    btn.addEventListener('touchend', function(e) {
-                        e.preventDefault();
-                        setTimeout(() => this.classList.remove('active'), 200);
-                    });
-                }
-            });
         });
         
-        // Adjust on resize
-        window.addEventListener('resize', function() {
-            const mobileControls = document.getElementById('mobileControls');
-            const gameBoard = document.getElementById('gameBoard');
+        // Connect mobile controls to game (after game loads)
+        setTimeout(function() {
+            const upBtn = document.querySelector('.touch-btn.up');
+            const downBtn = document.querySelector('.touch-btn.down');
+            const leftBtn = document.querySelector('.touch-btn.left');
+            const rightBtn = document.querySelector('.touch-btn.right');
             
-            if (window.innerWidth <= 768 && gameBoard) {
-                mobileControls.classList.remove('hidden');
-                const availableWidth = window.innerWidth - 40;
-                const cellSize = Math.max(18, Math.floor(availableWidth / 15));
-                gameBoard.style.gridTemplateColumns = `repeat(15, ${cellSize}px)`;
-                gameBoard.style.gridTemplateRows = `repeat(15, ${cellSize}px)`;
+            if (upBtn && downBtn && leftBtn && rightBtn) {
+                // Simple click handlers that will work once game is loaded
+                upBtn.onclick = function() {
+                    if (window.game && window.game.sasquatch && window.game.moveSasquatch) {
+                        window.game.moveSasquatch(window.game.sasquatch.x, window.game.sasquatch.y - 1);
+                    }
+                };
+                
+                downBtn.onclick = function() {
+                    if (window.game && window.game.sasquatch && window.game.moveSasquatch) {
+                        window.game.moveSasquatch(window.game.sasquatch.x, window.game.sasquatch.y + 1);
+                    }
+                };
+                
+                leftBtn.onclick = function() {
+                    if (window.game && window.game.sasquatch && window.game.moveSasquatch) {
+                        window.game.moveSasquatch(window.game.sasquatch.x - 1, window.game.sasquatch.y);
+                    }
+                };
+                
+                rightBtn.onclick = function() {
+                    if (window.game && window.game.sasquatch && window.game.moveSasquatch) {
+                        window.game.moveSasquatch(window.game.sasquatch.x + 1, window.game.sasquatch.y);
+                    }
+                };
+                
+                // Touch handlers
+                upBtn.ontouchstart = function(e) { e.preventDefault(); this.onclick(); };
+                downBtn.ontouchstart = function(e) { e.preventDefault(); this.onclick(); };
+                leftBtn.ontouchstart = function(e) { e.preventDefault(); this.onclick(); };
+                rightBtn.ontouchstart = function(e) { e.preventDefault(); this.onclick(); };
             }
-        });
+        }, 1000); // Wait 1 second for game to load
     </script>
 </body>
 </html>
