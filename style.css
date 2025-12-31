@@ -350,14 +350,14 @@ button:active, button.active {
     }
     
     #gameBoard {
-        grid-template-columns: repeat(15, 20px) !important;
-        grid-template-rows: repeat(15, 20px) !important;
+        grid-template-columns: repeat(15, 20px);
+        grid-template-rows: repeat(15, 20px);
     }
     
     .cell {
-        width: 20px !important;
-        height: 20px !important;
-        font-size: 16px !important;
+        width: 20px;
+        height: 20px;
+        font-size: 16px;
     }
     
     #ui {
@@ -410,14 +410,14 @@ button:active, button.active {
 /* Small phones */
 @media (max-width: 480px) {
     #gameBoard {
-        grid-template-columns: repeat(15, 18px) !important;
-        grid-template-rows: repeat(15, 18px) !important;
+        grid-template-columns: repeat(15, 18px);
+        grid-template-rows: repeat(15, 18px);
     }
     
     .cell {
-        width: 18px !important;
-        height: 18px !important;
-        font-size: 14px !important;
+        width: 18px;
+        height: 18px;
+        font-size: 14px;
     }
     
     #controls {
@@ -452,14 +452,14 @@ button:active, button.active {
 /* Very small phones */
 @media (max-width: 360px) {
     #gameBoard {
-        grid-template-columns: repeat(15, 16px) !important;
-        grid-template-rows: repeat(15, 16px) !important;
+        grid-template-columns: repeat(15, 16px);
+        grid-template-rows: repeat(15, 16px);
     }
     
     .cell {
-        width: 16px !important;
-        height: 16px !important;
-        font-size: 12px !important;
+        width: 16px;
+        height: 16px;
+        font-size: 12px;
     }
     
     button {
