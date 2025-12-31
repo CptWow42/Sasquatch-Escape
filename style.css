@@ -1,0 +1,223 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: "Courier New", monospace;
+    background: #1a5c1a;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    color: #fff;
+}
+
+#gameContainer {
+    text-align: center;
+    background: #2d7a2d;
+    border: 4px solid #5a3921;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+}
+
+#ui {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 15px;
+    font-size: 18px;
+    font-weight: bold;
+}
+
+#message {
+    color: #ffeb3b;
+    font-weight: bold;
+    min-height: 25px;
+}
+
+#gameBoard {
+    display: grid;
+    grid-template-columns: repeat(15, 30px);
+    grid-template-rows: repeat(15, 30px);
+    gap: 1px;
+    background: #3e8c3e;
+    border: 3px solid #5a3921;
+    margin: 0 auto;
+    width: fit-content;
+}
+
+.cell {
+    width: 30px;
+    height: 30px;
+    background: #4ca64c;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 20px;
+}
+
+/* Squatch Styling*/
+.sasquatch {
+    background: #4ca64c;
+    color: #2d2d2d;
+}
+
+/* Hunter Styling */
+.hunter {
+    background: #4ca64c;
+    color: #ff6600;
+    font-weight: bold;
+}
+
+/* Tree Styling */
+.tree {
+    background: #2d5a2d;
+    color: #3e8c3e;
+}
+
+/* Cave Styling */
+.cave {
+    background: #4ca64c;
+    color: #5a3921;
+    font-weight: bold;
+}
+
+/* River Styling */
+.river {
+    background: #1a5c7a;
+    color: #2d91d1;
+    font-weight: bold;
+}
+
+/* Bridge Styling */
+.bridge {
+    background: #8b5a2d;
+    color: #5a3921;
+}
+
+/* Mushroom Styling */
+.mushroom {
+    background: #4ca64c;
+    color: #ffffff;
+}
+
+/* Pond Styling */
+.pond {
+    background: #1a5c7a;
+    color: #2d91d1;
+    font-weight: bold;
+}
+
+/* Control Buttons */
+#controls {
+    margin: 15px 0;
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+}
+
+button {
+    padding: 8px 16px;
+    font-family: "Courier New", monospace;
+    font-size: 14px;
+    font-weight: bold;
+    background: #5a3921;
+    color: #fff;
+    border: 2px solid #8b5a2d;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+button:hover {
+    background: #8b5a2d;
+    transform: scale(1.05);
+}
+
+button:active {
+    transform: scale(0.95);
+}
+
+#instructions {
+    margin-top: 15px;
+    font-size: 14px;
+    color: #ccc;
+}
+
+/* Screen overlays */
+.screen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.85);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.screenContent {
+    background: #2d7a2d;
+    padding: 40px;
+    border: 4px solid #5a3921;
+    border-radius: 8px;
+    text-align: center;
+    max-width: 500px;
+}
+
+.screenContent h1 {
+    color: #ffeb3b;
+    margin-bottom: 20px;
+    font-size: 2.5em;
+}
+
+.screenContent p {
+    margin-bottom: 30px;
+    font-size: 1.2em;
+    line-height: 1.5;
+}
+
+.hidden {
+    display: none;
+}
+
+/* Invisibility effect */
+.invisible {
+    opacity: 0.5;
+    border: 2px dashed #ffeb3b;
+}
+
+/* Hunter scared effect */
+.scared {
+    color: #ff0000 !important;
+    animation: shake 0.5s infinite;
+}
+
+/* Footprint styling */
+.footprint {
+    background: #4ca64c !important;
+    color: #5a3921;
+    font-weight: bold;
+}
+
+/* Animal styling */
+.animal {
+    background: #4ca64c !important;
+}
+
+@keyframes shake {
+    0%,
+    100% {
+        transform: translateX(0);
+    }
+    25% {
+        transform: translateX(-2px);
+    }
+    75% {
+        transform: translateX(2px);
+    }
+}
