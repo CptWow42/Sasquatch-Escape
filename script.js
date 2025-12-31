@@ -1019,7 +1019,7 @@ class SasquatchGame {
         }
     }
     
-        // Game Management
+    // Game Management
     checkGameOver() {
         const hunterNearby = this.hunters.some(hunter => {
             const distance = Math.abs(hunter.x - this.sasquatch.x) + Math.abs(hunter.y - this.sasquatch.y);
@@ -1078,44 +1078,7 @@ class SasquatchGame {
     }
 }
 
-// DEBUG VERSION - Start the game with logging
+// Start the game when the page loads
 window.addEventListener('load', () => {
-    console.log('=== SASQUATCH GAME DEBUG ===');
-    console.log('1. Window loaded, creating game instance...');
-    
-    try {
-        const game = new SasquatchGame();
-        window.game = game; // Make accessible in console for debugging
-        
-        console.log('2. Game instance created successfully');
-        console.log('3. Checking button elements...');
-        
-        // Test if buttons are accessible
-        const startButton = document.getElementById('startButton');
-        const startScreen = document.getElementById('startScreen');
-        
-        console.log('Start button found:', !!startButton);
-        console.log('Start screen found:', !!startScreen);
-        console.log('Start screen hidden?', startScreen.classList.contains('hidden'));
-        
-        if (startButton) {
-            // Add test click handler
-            startButton.addEventListener('click', () => {
-                console.log('START BUTTON CLICKED!');
-                game.startGame();
-            });
-        }
-        
-        console.log('5. Game ready! Check console for errors');
-        
-    } catch (error) {
-        console.error('ERROR creating game:', error);
-        alert('Game failed to load: ' + error.message);
-    }
-});
-        
-    } catch (error) {
-        console.error('ERROR creating game:', error);
-        alert('Game failed to load: ' + error.message);
-    }
+    new SasquatchGame();
 });
