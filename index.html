@@ -5,6 +5,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>8-Bit Sasquatch Escape</title>
     <link rel="stylesheet" href="style.css">
+    
+    <!-- Facebook/Twitter sharing meta tags -->
+    <meta property="og:title" content="8-Bit Sasquatch Escape">
+    <meta property="og:description" content="Help Sasquatch escape hunters in this retro puzzle game!">
+    <meta property="og:url" content="https://cptwow42.github.io/Sasquatch-Escape/">
+    <meta property="og:type" content="website">
+    
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="8-Bit Sasquatch Escape">
+    <meta name="twitter:description" content="Help Sasquatch escape hunters in this retro puzzle game!">
 </head>
 <body>
     <div id="gameContainer">
@@ -22,8 +32,23 @@
             <button id="eatMushroom">Eat Mushroom (M) <span id="mushroomCount">0</span></button>
         </div>
         
+        <!-- Mobile Touch Controls -->
+        <div id="mobileControls" class="hidden">
+            <div class="touch-controls">
+                <div class="d-pad">
+                    <button class="touch-btn up" data-direction="up">↑</button>
+                    <div class="middle-row">
+                        <button class="touch-btn left" data-direction="left">←</button>
+                        <button class="touch-btn right" data-direction="right">→</button>
+                    </div>
+                    <button class="touch-btn down" data-direction="down">↓</button>
+                </div>
+            </div>
+        </div>
+        
         <div id="instructions">
             <p>Use ARROW KEYS to move Sasquatch. Hide behind trees (dark green). Avoid hunters in orange.</p>
+            <p class="mobile-instruction">On mobile: Use the touch controls above to move.</p>
         </div>
     </div>
 
@@ -34,6 +59,7 @@
             <p>Help the Sasquatch return to its cave without being seen by hunters!</p>
             <button id="startButton">Start Game</button>
             <p style="margin-top: 15px; font-size: 14px; color: #ccc;">Or press ENTER to start</p>
+            <p class="mobile-instruction" style="margin-top: 10px; font-size: 12px; color: #aaa;">On mobile: Tap Start Game button</p>
         </div>
     </div>
 
@@ -57,6 +83,57 @@
         </div>
     </div>
 
-    <script src="script.js"></script>
+    <script src="script.js" defer></script>
+    
+    <script>
+        // Mobile touch controls initialization
+        document.addEventListener('DOMContentLoaded', function() {
+            const mobileControls = document.getElementById('mobileControls');
+            
+            // Show mobile controls only on touch devices
+            if ('ontouchstart' in window || navigator.maxTouchPoints) {
+                mobileControls.classList.remove('hidden');
+                
+                // Add touch event handlers for movement
+                document.querySelectorAll('.touch-btn').forEach(button => {
+                    button.addEventListener('touchstart', function(e) {
+                        e.preventDefault();
+                        const direction = this.dataset.direction;
+                        // Simulate arrow key press
+                        const event = new KeyboardEvent('keydown', {
+                            key: 'Arrow' + direction.charAt(0).toUpperCase() + direction.slice(1)
+                        });
+                        document.dispatchEvent(event);
+                    });
+                    
+                    button.addEventListener('touchend', function(e) {
+                        e.preventDefault();
+                    });
+                    
+                    // Also support mouse clicks for testing on desktop
+                    button.addEventListener('mousedown', function(e) {
+                        e.preventDefault();
+                        const direction = this.dataset.direction;
+                        const event = new KeyboardEvent('keydown', {
+                            key: 'Arrow' + direction.charAt(0).toUpperCase() + direction.slice(1)
+                        });
+                        document.dispatchEvent(event);
+                    });
+                });
+            }
+            
+            // Make sure all game buttons work on touch devices
+            ['makeNoise', 'bangTree', 'eatMushroom', 'startButton', 'nextLevelButton', 'restartButton'].forEach(id => {
+                const btn = document.getElementById(id);
+                if (btn) {
+                    btn.addEventListener('touchstart', function(e) {
+                        // Prevent double-tap zoom on mobile
+                        e.preventDefault();
+                        this.click();
+                    });
+                }
+            });
+        });
+    </script>
 </body>
 </html>
