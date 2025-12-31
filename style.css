@@ -12,6 +12,7 @@ body {
     align-items: center;
     min-height: 100vh;
     color: #fff;
+    padding: 20px;
 }
 
 #gameContainer {
@@ -21,6 +22,8 @@ body {
     border-radius: 8px;
     padding: 20px;
     box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+    max-width: 100%;
+    overflow: hidden;
 }
 
 #ui {
@@ -29,33 +32,46 @@ body {
     margin-bottom: 15px;
     font-size: 18px;
     font-weight: bold;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+#ui > div {
+    flex: 1;
+    min-width: 120px;
 }
 
 #message {
     color: #ffeb3b;
     font-weight: bold;
     min-height: 25px;
+    width: 100%;
+    order: 3;
+    margin-top: 10px;
 }
 
 #gameBoard {
     display: grid;
-    grid-template-columns: repeat(15, 30px);
-    grid-template-rows: repeat(15, 30px);
+    grid-template-columns: repeat(15, minmax(0, 30px));
+    grid-template-rows: repeat(15, minmax(0, 30px));
     gap: 1px;
     background: #3e8c3e;
     border: 3px solid #5a3921;
     margin: 0 auto;
     width: fit-content;
+    max-width: 100%;
+    overflow: hidden;
 }
 
 .cell {
-    width: 30px;
-    height: 30px;
+    width: 100%;
+    height: 100%;
+    aspect-ratio: 1/1;
     background: #4ca64c;
     display: flex;
     justify-content: center;
     align-items: center;
-    font-size: 20px;
+    font-size: 16px;
 }
 
 /* Squatch Styling*/
@@ -116,19 +132,22 @@ body {
     display: flex;
     gap: 10px;
     justify-content: center;
+    flex-wrap: wrap;
 }
 
 button {
-    padding: 8px 16px;
+    padding: 12px 20px;
     font-family: "Courier New", monospace;
-    font-size: 14px;
+    font-size: 16px;
     font-weight: bold;
     background: #5a3921;
     color: #fff;
     border: 2px solid #8b5a2d;
-    border-radius: 4px;
+    border-radius: 6px;
     cursor: pointer;
     transition: all 0.2s;
+    min-width: 140px;
+    touch-action: manipulation;
 }
 
 button:hover {
@@ -140,10 +159,92 @@ button:active {
     transform: scale(0.95);
 }
 
+/* Mobile Touch Controls */
+#mobileControls {
+    margin: 20px 0;
+    display: flex;
+    justify-content: center;
+}
+
+.touch-controls {
+    background: rgba(90, 57, 33, 0.8);
+    border-radius: 20px;
+    padding: 20px;
+    backdrop-filter: blur(5px);
+}
+
+.d-pad {
+    display: grid;
+    grid-template-areas: 
+        ". up ."
+        "left . right"
+        ". down .";
+    gap: 15px;
+    justify-items: center;
+}
+
+.middle-row {
+    display: flex;
+    justify-content: space-between;
+    grid-area: 2 / 1 / 3 / 4;
+    width: 100%;
+}
+
+.touch-btn {
+    width: 70px;
+    height: 70px;
+    background: #5a3921;
+    border: 3px solid #8b5a2d;
+    border-radius: 50%;
+    color: white;
+    font-size: 28px;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    touch-action: manipulation;
+    user-select: none;
+    cursor: pointer;
+    transition: all 0.1s;
+}
+
+.touch-btn:active, .touch-btn.active {
+    background: #8b5a2d;
+    transform: scale(0.9);
+}
+
+.touch-btn.up { 
+    grid-area: up; 
+    margin-bottom: 5px;
+}
+
+.touch-btn.down { 
+    grid-area: down; 
+    margin-top: 5px;
+}
+
+.touch-btn.left { 
+    grid-area: left; 
+    margin-right: 10px;
+}
+
+.touch-btn.right { 
+    grid-area: right; 
+    margin-left: 10px;
+}
+
 #instructions {
     margin-top: 15px;
     font-size: 14px;
     color: #ccc;
+    line-height: 1.5;
+}
+
+.mobile-instruction {
+    font-size: 12px;
+    color: #aaa;
+    margin-top: 5px;
+    font-style: italic;
 }
 
 /* Screen overlays */
@@ -162,27 +263,29 @@ button:active {
 
 .screenContent {
     background: #2d7a2d;
-    padding: 40px;
+    padding: 30px;
     border: 4px solid #5a3921;
     border-radius: 8px;
     text-align: center;
-    max-width: 500px;
+    max-width: 90%;
+    width: 500px;
+    margin: 20px;
 }
 
 .screenContent h1 {
     color: #ffeb3b;
     margin-bottom: 20px;
-    font-size: 2.5em;
+    font-size: 2em;
 }
 
 .screenContent p {
-    margin-bottom: 30px;
-    font-size: 1.2em;
+    margin-bottom: 25px;
+    font-size: 1.1em;
     line-height: 1.5;
 }
 
 .hidden {
-    display: none;
+    display: none !important;
 }
 
 /* Invisibility effect */
@@ -219,5 +322,102 @@ button:active {
     }
     75% {
         transform: translateX(2px);
+    }
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    #gameBoard {
+        grid-template-columns: repeat(15, minmax(0, 20px));
+        grid-template-rows: repeat(15, minmax(0, 20px));
+    }
+    
+    .cell {
+        font-size: 14px;
+    }
+    
+    #ui {
+        font-size: 16px;
+    }
+    
+    button {
+        padding: 10px 16px;
+        font-size: 14px;
+        min-width: 120px;
+    }
+    
+    .touch-btn {
+        width: 60px;
+        height: 60px;
+        font-size: 24px;
+    }
+    
+    .screenContent {
+        padding: 20px;
+    }
+    
+    .screenContent h1 {
+        font-size: 1.8em;
+    }
+}
+
+@media (max-width: 480px) {
+    #gameContainer {
+        padding: 15px;
+    }
+    
+    #gameBoard {
+        grid-template-columns: repeat(15, minmax(0, 18px));
+        grid-template-rows: repeat(15, minmax(0, 18px));
+    }
+    
+    .cell {
+        font-size: 12px;
+    }
+    
+    #controls {
+        gap: 8px;
+    }
+    
+    button {
+        padding: 8px 12px;
+        font-size: 13px;
+        min-width: 100px;
+    }
+    
+    .touch-btn {
+        width: 55px;
+        height: 55px;
+        font-size: 22px;
+    }
+    
+    .screenContent {
+        padding: 15px;
+    }
+    
+    .screenContent h1 {
+        font-size: 1.6em;
+    }
+}
+
+/* Hide mobile controls on desktop by default */
+@media (min-width: 769px) {
+    #mobileControls {
+        display: none;
+    }
+    
+    .mobile-instruction {
+        display: none;
+    }
+}
+
+/* Show mobile controls on touch-capable devices */
+@media (hover: none) and (pointer: coarse) {
+    #mobileControls {
+        display: flex !important;
+    }
+    
+    .mobile-instruction {
+        display: block !important;
     }
 }
