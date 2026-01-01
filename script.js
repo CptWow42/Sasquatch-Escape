@@ -33,7 +33,10 @@ class SasquatchGame {
     }
     
     showStartScreen() {
-        document.getElementById('startScreen').classList.remove('hidden');
+        const startScreen = document.getElementById('startScreen');
+        if (startScreen) {
+            startScreen.classList.remove('hidden');
+        }
     }
     
     startGameLoop() {
@@ -64,89 +67,70 @@ class SasquatchGame {
     }
     
     initializeEventListeners() {
+        // Add keydown listener
         document.addEventListener('keydown', (e) => this.handleKeyPress(e));
-        document.getElementById('makeNoise').addEventListener('click', () => this.makeNoise());
-        document.getElementById('bangTree').addEventListener('click', () => this.bangTree());
-        document.getElementById('eatMushroom').addEventListener('click', () => this.eatMushroom());
-        document.getElementById('startButton').addEventListener('click', () => this.startGame());
-        document.getElementById('nextLevelButton').addEventListener('click', () => this.nextLevel());
-        document.getElementById('restartButton').addEventListener('click', () => this.restartGame());
+        
+        // Add button listeners with null checks
+        const makeNoiseBtn = document.getElementById('makeNoise');
+        const bangTreeBtn = document.getElementById('bangTree');
+        const eatMushroomBtn = document.getElementById('eatMushroom');
+        const startBtn = document.getElementById('startButton');
+        const nextLevelBtn = document.getElementById('nextLevelButton');
+        const restartBtn = document.getElementById('restartButton');
+        
+        if (makeNoiseBtn) makeNoiseBtn.addEventListener('click', () => this.makeNoise());
+        if (bangTreeBtn) bangTreeBtn.addEventListener('click', () => this.bangTree());
+        if (eatMushroomBtn) eatMushroomBtn.addEventListener('click', () => this.eatMushroom());
+        if (startBtn) startBtn.addEventListener('click', () => this.startGame());
+        if (nextLevelBtn) nextLevelBtn.addEventListener('click', () => this.nextLevel());
+        if (restartBtn) restartBtn.addEventListener('click', () => this.restartGame());
         
         // Initialize mobile touch controls
         this.initializeMobileControls();
     }
     
     initializeMobileControls() {
-        const isMobile = window.innerWidth <= 768 || 
-                        'ontouchstart' in window || 
-                        /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+        // Simple mobile detection - just check width for now
+        const isMobile = window.innerWidth <= 768;
         
         if (isMobile) {
+            console.log('Mobile device detected, showing mobile controls');
+            
+            // The mobile controls are already in HTML, just show them
             const mobileControls = document.getElementById('mobileControls');
             if (mobileControls) {
                 mobileControls.classList.remove('hidden');
             }
             
+            // Connect the mobile buttons
             this.connectMobileButtons();
         }
     }
     
     connectMobileButtons() {
-        const upBtn = document.querySelector('.touch-btn.up');
-        const downBtn = document.querySelector('.touch-btn.down');
-        const leftBtn = document.querySelector('.touch-btn.left');
-        const rightBtn = document.querySelector('.touch-btn.right');
+        // Connect directional buttons
+        const directions = {
+            'up': () => this.moveSasquatch(this.sasquatch.x, this.sasquatch.y - 1),
+            'down': () => this.moveSasquatch(this.sasquatch.x, this.sasquatch.y + 1),
+            'left': () => this.moveSasquatch(this.sasquatch.x - 1, this.sasquatch.y),
+            'right': () => this.moveSasquatch(this.sasquatch.x + 1, this.sasquatch.y)
+        };
         
-        if (upBtn && downBtn && leftBtn && rightBtn) {
-            // Clone buttons to remove old listeners
-            const newUp = upBtn.cloneNode(true);
-            const newDown = downBtn.cloneNode(true);
-            const newLeft = leftBtn.cloneNode(true);
-            const newRight = rightBtn.cloneNode(true);
-            
-            upBtn.parentNode.replaceChild(newUp, upBtn);
-            downBtn.parentNode.replaceChild(newDown, downBtn);
-            leftBtn.parentNode.replaceChild(newLeft, leftBtn);
-            rightBtn.parentNode.replaceChild(newRight, rightBtn);
-            
-            // Add click handlers
-            newUp.addEventListener('click', () => {
-                this.moveSasquatch(this.sasquatch.x, this.sasquatch.y - 1);
-            });
-            
-            newDown.addEventListener('click', () => {
-                this.moveSasquatch(this.sasquatch.x, this.sasquatch.y + 1);
-            });
-            
-            newLeft.addEventListener('click', () => {
-                this.moveSasquatch(this.sasquatch.x - 1, this.sasquatch.y);
-            });
-            
-            newRight.addEventListener('click', () => {
-                this.moveSasquatch(this.sasquatch.x + 1, this.sasquatch.y);
-            });
-            
-            // Add touch handlers
-            newUp.addEventListener('touchstart', (e) => {
-                e.preventDefault();
-                this.moveSasquatch(this.sasquatch.x, this.sasquatch.y - 1);
-            });
-            
-            newDown.addEventListener('touchstart', (e) => {
-                e.preventDefault();
-                this.moveSasquatch(this.sasquatch.x, this.sasquatch.y + 1);
-            });
-            
-            newLeft.addEventListener('touchstart', (e) => {
-                e.preventDefault();
-                this.moveSasquatch(this.sasquatch.x - 1, this.sasquatch.y);
-            });
-            
-            newRight.addEventListener('touchstart', (e) => {
-                e.preventDefault();
-                this.moveSasquatch(this.sasquatch.x + 1, this.sasquatch.y);
-            });
-        }
+        Object.keys(directions).forEach(dir => {
+            const btn = document.querySelector(`.touch-btn[data-direction="${dir}"]`);
+            if (btn) {
+                // Remove existing listeners
+                const newBtn = btn.cloneNode(true);
+                btn.parentNode.replaceChild(newBtn, btn);
+                
+                // Add new listeners
+                newBtn.addEventListener('click', directions[dir]);
+                newBtn.addEventListener('touchstart', (e) => {
+                    e.preventDefault();
+                    directions[dir]();
+                });
+            }
+        });
     }
     
     handleKeyPress(e) {
@@ -155,21 +139,21 @@ class SasquatchGame {
         const levelCompleteScreen = document.getElementById('levelCompleteScreen');
         
         if (e.key === 'Enter') {
-            if (!startScreen.classList.contains('hidden')) {
+            if (startScreen && !startScreen.classList.contains('hidden')) {
                 this.startGame();
                 return;
-            } else if (!gameOverScreen.classList.contains('hidden')) {
+            } else if (gameOverScreen && !gameOverScreen.classList.contains('hidden')) {
                 this.restartGame();
                 return;
-            } else if (!levelCompleteScreen.classList.contains('hidden')) {
+            } else if (levelCompleteScreen && !levelCompleteScreen.classList.contains('hidden')) {
                 this.nextLevel();
                 return;
             }
         }
         
-        if (!startScreen.classList.contains('hidden') || 
-            !gameOverScreen.classList.contains('hidden') ||
-            !levelCompleteScreen.classList.contains('hidden')) {
+        if ((startScreen && !startScreen.classList.contains('hidden')) || 
+            (gameOverScreen && !gameOverScreen.classList.contains('hidden')) ||
+            (levelCompleteScreen && !levelCompleteScreen.classList.contains('hidden'))) {
             return;
         }
         
@@ -476,9 +460,18 @@ class SasquatchGame {
     }
     
     renderBoard() {
+        if (!this.gameBoard) return;
+        
         this.gameBoard.innerHTML = '';
-        this.gameBoard.style.gridTemplateColumns = `repeat(${this.boardSize}, 30px)`;
-        this.gameBoard.style.gridTemplateRows = `repeat(${this.boardSize}, 30px)`;
+        
+        // On mobile, adjust cell size
+        if (window.innerWidth <= 768) {
+            this.gameBoard.style.gridTemplateColumns = `repeat(${this.boardSize}, 20px)`;
+            this.gameBoard.style.gridTemplateRows = `repeat(${this.boardSize}, 20px)`;
+        } else {
+            this.gameBoard.style.gridTemplateColumns = `repeat(${this.boardSize}, 30px)`;
+            this.gameBoard.style.gridTemplateRows = `repeat(${this.boardSize}, 30px)`;
+        }
         
         for (let y = 0; y < this.boardSize; y++) {
             for (let x = 0; x < this.boardSize; x++) {
@@ -969,4 +962,81 @@ class SasquatchGame {
     }
     
     completeLevel() {
-        this.stopGame
+        this.stopGameLoop();
+        const levelCompleteScreen = document.getElementById('levelCompleteScreen');
+        if (levelCompleteScreen) {
+            levelCompleteScreen.classList.remove('hidden');
+        }
+    }
+    
+    gameOver() {
+        const gameOverScreen = document.getElementById('gameOverScreen');
+        if (gameOverScreen) {
+            gameOverScreen.classList.remove('hidden');
+        }
+    }
+    
+    nextLevel() {
+        this.level++;
+        const levelCompleteScreen = document.getElementById('levelCompleteScreen');
+        if (levelCompleteScreen) {
+            levelCompleteScreen.classList.add('hidden');
+        }
+        this.generateLevel();
+    }
+    
+    startGame() {
+        const startScreen = document.getElementById('startScreen');
+        if (startScreen) {
+            startScreen.classList.add('hidden');
+        }
+        
+        const gameOverScreen = document.getElementById('gameOverScreen');
+        if (gameOverScreen) {
+            gameOverScreen.classList.add('hidden');
+        }
+        
+        const levelCompleteScreen = document.getElementById('levelCompleteScreen');
+        if (levelCompleteScreen) {
+            levelCompleteScreen.classList.add('hidden');
+        }
+        
+        this.level = 1;
+        this.mushrooms = 0;
+        this.generateLevel();
+    }
+    
+    restartGame() {
+        const gameOverScreen = document.getElementById('gameOverScreen');
+        if (gameOverScreen) {
+            gameOverScreen.classList.add('hidden');
+        }
+        this.startGame();
+    }
+    
+    updateUI() {
+        if (this.levelElement) this.levelElement.textContent = this.level;
+        if (this.hunterCountElement) this.hunterCountElement.textContent = this.hunterCount;
+        if (this.mushroomCountElement) this.mushroomCountElement.textContent = this.mushrooms;
+    }
+    
+    showMessage(text) {
+        if (this.messageElement) {
+            this.messageElement.textContent = text;
+            setTimeout(() => {
+                if (this.messageElement) {
+                    this.messageElement.textContent = '';
+                }
+            }, 3000);
+        }
+    }
+}
+
+// Start the game when DOM is loaded
+window.addEventListener('DOMContentLoaded', () => {
+    // Remove the inline script's mobile controls initialization since we handle it in the class
+    const existingGame = new SasquatchGame();
+    
+    // Make sure game is accessible globally
+    window.game = existingGame;
+});
